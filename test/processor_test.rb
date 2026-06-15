@@ -1,0 +1,58 @@
+# frozen_string_literal: true
+
+require "test_helper"
+
+class ProcessorTest < Minitest::Test
+  FIXTURE_PATH = File.expand_path("../fixtures/sample.csv", __dir__)
+
+  EMAIL_REGEX = URI::MailTo::EMAIL_REGEXP
+
+  def pipeline
+    CsvProcessor.define do
+      transform :email, CsvProcessor::Rules::NormalizeEmail
+      transform :name,  CsvProcessor::Rules::DefaultValue, default: "unknown"
+      validate  :email, CsvProcessor::Rules::Presence
+      validate  :email, CsvProcessor::Rules::Format, regex: EMAIL_REGEX
+    end
+  end
+
+  def results
+    @results ||= CsvProcessor::Processor.new(pipeline).call(FIXTURE_PATH)
+  end
+
+  def test_returns_one_result_per_row
+    assert_equal 4, results.size
+  end
+
+  def test_alice_email_is_normalized
+    assert_equal "alice@example.com", results[0].record[:email]
+  end
+
+  def test_alice_row_is_valid
+    assert results[0].valid?
+  end
+
+  def test_bob_row_is_invalid_missing_email
+    refute results[1].valid?
+    assert_equal 1, results[1].errors_for(:email).size
+    assert_equal "must be present", results[1].errors_for(:email).first[:message]
+  end
+
+  def test_blank_name_gets_default_value
+    assert_equal "unknown", results[2].record[:name]
+  end
+
+  def test_third_row_is_valid
+    assert results[2].valid?
+  end
+
+  def test_charlie_email_fails_format_validation
+    refute results[3].valid?
+    assert_equal 1, results[3].errors_for(:email).size
+    assert_equal "is invalid", results[3].errors_for(:email).first[:message]
+  end
+
+  def test_original_record_is_unmodified
+    assert_equal "ALICE@EXAMPLE.COM", results[0].original[:email]
+  end
+end

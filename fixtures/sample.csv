@@ -1,0 +1,5 @@
+name,email,phone
+Alice,ALICE@EXAMPLE.COM,+1 (555) 000-1234
+Bob,,5550001235
+,valid@example.com,5550001236
+Charlie,not-an-email,5550001237
