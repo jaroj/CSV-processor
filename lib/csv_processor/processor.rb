@@ -2,7 +2,7 @@
 
 require "csv"
 
-module CsvProcessor
+module CSVProcessor
   class Processor
     def initialize(pipeline)
       @pipeline = pipeline

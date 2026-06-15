@@ -2,7 +2,7 @@
 
 require_relative "pipeline"
 
-module CsvProcessor
+module CSVProcessor
   class PipelineBuilder
     def initialize
       @rules      = []

@@ -2,10 +2,10 @@
 
 require_relative "../rule"
 
-module CsvProcessor
+module CSVProcessor
   module Rules
     class Format
-      include CsvProcessor::Rule
+      include CSVProcessor::Rule
 
       def initialize(field, regex:, **_opts)
         @field = field

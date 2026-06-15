@@ -4,7 +4,7 @@ require_relative "lib/csv_processor/version"
 
 Gem::Specification.new do |spec|
   spec.name = "csv_processor"
-  spec.version = CsvProcessor::VERSION
+  spec.version = CSVProcessor::VERSION
   spec.authors = ["Jarek Jeleniewicz"]
   spec.email = ["jarojele@gmail.com"]
 

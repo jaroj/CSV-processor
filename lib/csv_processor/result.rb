@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module CsvProcessor
+module CSVProcessor
   class Result
     attr_reader :record, :original, :errors, :row
 

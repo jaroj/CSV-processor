@@ -12,7 +12,7 @@ require_relative "csv_processor/rules/default_value"
 require_relative "csv_processor/rules/presence"
 require_relative "csv_processor/rules/format"
 
-module CsvProcessor
+module CSVProcessor
   class Error < StandardError; end
 
   def self.define(&)

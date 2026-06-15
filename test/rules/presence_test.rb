@@ -4,12 +4,12 @@ require "test_helper"
 
 class PresenceTest < Minitest::Test
   def rule
-    CsvProcessor::Rules::Presence.new(:email)
+    CSVProcessor::Rules::Presence.new(:email)
   end
 
   def errors_for(value)
     record  = { email: value }
-    context = CsvProcessor::Context.new
+    context = CSVProcessor::Context.new
     rule.call(record, context)
     context.errors
   end
@@ -36,7 +36,7 @@ class PresenceTest < Minitest::Test
 
   def test_does_not_mutate_record
     record  = { email: nil }
-    context = CsvProcessor::Context.new
+    context = CSVProcessor::Context.new
     rule.call(record, context)
 
     assert_nil record[:email]

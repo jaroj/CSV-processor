@@ -4,12 +4,12 @@ require "test_helper"
 
 class DefaultValueTest < Minitest::Test
   def rule(default: "unknown")
-    CsvProcessor::Rules::DefaultValue.new(:name, default: default)
+    CSVProcessor::Rules::DefaultValue.new(:name, default: default)
   end
 
   def call(value, default: "unknown")
     record = { name: value }
-    rule(default: default).call(record, CsvProcessor::Context.new)
+    rule(default: default).call(record, CSVProcessor::Context.new)
     record[:name]
   end
 
@@ -35,7 +35,7 @@ class DefaultValueTest < Minitest::Test
 
   def test_only_target_field_is_affected
     record = { name: nil, email: "user@example.com" }
-    rule.call(record, CsvProcessor::Context.new)
+    rule.call(record, CSVProcessor::Context.new)
 
     assert_equal "unknown",          record[:name]
     assert_equal "user@example.com", record[:email]
@@ -43,7 +43,7 @@ class DefaultValueTest < Minitest::Test
 
   def test_does_not_add_errors
     record  = { name: nil }
-    context = CsvProcessor::Context.new
+    context = CSVProcessor::Context.new
     rule.call(record, context)
 
     assert_empty context.errors

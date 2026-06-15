@@ -4,13 +4,13 @@ require "test_helper"
 
 class PipelineBuilderTest < Minitest::Test
   def test_build_returns_a_pipeline
-    builder = CsvProcessor::PipelineBuilder.new
-    assert_instance_of CsvProcessor::Pipeline, builder.build
+    builder = CSVProcessor::PipelineBuilder.new
+    assert_instance_of CSVProcessor::Pipeline, builder.build
   end
 
   def test_transform_with_class_registers_rule
-    builder = CsvProcessor::PipelineBuilder.new
-    builder.transform(:email, CsvProcessor::Rules::NormalizeEmail)
+    builder = CSVProcessor::PipelineBuilder.new
+    builder.transform(:email, CSVProcessor::Rules::NormalizeEmail)
     pipeline = builder.build
 
     result = pipeline.call({ email: "USER@EXAMPLE.COM" })
@@ -22,7 +22,7 @@ class PipelineBuilderTest < Minitest::Test
     called = false
     rule   = ->(_r, _c) { called = true }
 
-    builder = CsvProcessor::PipelineBuilder.new
+    builder = CSVProcessor::PipelineBuilder.new
     builder.transform(rule)
     builder.build.call({})
 
@@ -30,8 +30,8 @@ class PipelineBuilderTest < Minitest::Test
   end
 
   def test_validate_alias_works_like_transform
-    builder = CsvProcessor::PipelineBuilder.new
-    builder.validate(:email, CsvProcessor::Rules::Presence)
+    builder = CSVProcessor::PipelineBuilder.new
+    builder.validate(:email, CSVProcessor::Rules::Presence)
     result = builder.build.call({ email: nil })
 
     assert result.invalid?
@@ -50,52 +50,52 @@ class PipelineBuilderTest < Minitest::Test
 
   def build_mixed_pipeline
     upcase = ->(record, _ctx) { record[:name] = record[:name].to_s.upcase }
-    builder = CsvProcessor::PipelineBuilder.new
-    builder.transform(:email, CsvProcessor::Rules::NormalizeEmail)
+    builder = CSVProcessor::PipelineBuilder.new
+    builder.transform(:email, CSVProcessor::Rules::NormalizeEmail)
     builder.transform(upcase)
-    builder.validate(:email, CsvProcessor::Rules::Presence)
+    builder.validate(:email, CSVProcessor::Rules::Presence)
     builder.build
   end
 
   def test_transform_with_symbol_and_no_class_raises
-    builder = CsvProcessor::PipelineBuilder.new
+    builder = CSVProcessor::PipelineBuilder.new
 
     assert_raises(ArgumentError) { builder.transform(:email) }
   end
 
   def test_duplicate_class_rule_on_same_field_raises
-    builder = CsvProcessor::PipelineBuilder.new
-    builder.validate(:email, CsvProcessor::Rules::Presence)
+    builder = CSVProcessor::PipelineBuilder.new
+    builder.validate(:email, CSVProcessor::Rules::Presence)
 
-    assert_raises(ArgumentError) { builder.validate(:email, CsvProcessor::Rules::Presence) }
+    assert_raises(ArgumentError) { builder.validate(:email, CSVProcessor::Rules::Presence) }
   end
 
   def test_same_class_on_different_fields_is_allowed
-    builder = CsvProcessor::PipelineBuilder.new
-    builder.validate(:email, CsvProcessor::Rules::Presence)
+    builder = CSVProcessor::PipelineBuilder.new
+    builder.validate(:email, CSVProcessor::Rules::Presence)
 
-    assert_nothing_raised { builder.validate(:name, CsvProcessor::Rules::Presence) }
+    assert_nothing_raised { builder.validate(:name, CSVProcessor::Rules::Presence) }
   end
 
   def test_duplicate_lambda_raises
     rule    = ->(_r, _c) {}
-    builder = CsvProcessor::PipelineBuilder.new
+    builder = CSVProcessor::PipelineBuilder.new
     builder.transform(rule)
 
     assert_raises(ArgumentError) { builder.transform(rule) }
   end
 
   def test_different_lambda_instances_are_allowed
-    builder = CsvProcessor::PipelineBuilder.new
+    builder = CSVProcessor::PipelineBuilder.new
     builder.transform(->(_r, _c) {})
 
     assert_nothing_raised { builder.transform(->(_r, _c) {}) }
   end
 
   def test_define_dsl_produces_same_result_as_builder
-    pipeline = CsvProcessor.define do
-      transform :email, CsvProcessor::Rules::NormalizeEmail
-      validate  :email, CsvProcessor::Rules::Presence
+    pipeline = CSVProcessor.define do
+      transform :email, CSVProcessor::Rules::NormalizeEmail
+      validate  :email, CSVProcessor::Rules::Presence
     end
 
     result = pipeline.call({ email: "  HELLO@EXAMPLE.COM  " })

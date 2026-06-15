@@ -7,12 +7,12 @@ class FormatTest < Minitest::Test
   EMAIL_REGEX = URI::MailTo::EMAIL_REGEXP
 
   def rule(regex: EMAIL_REGEX)
-    CsvProcessor::Rules::Format.new(:email, regex: regex)
+    CSVProcessor::Rules::Format.new(:email, regex: regex)
   end
 
   def errors_for(value, regex: EMAIL_REGEX)
     record  = { email: value }
-    context = CsvProcessor::Context.new
+    context = CSVProcessor::Context.new
     rule(regex: regex).call(record, context)
     context.errors
   end

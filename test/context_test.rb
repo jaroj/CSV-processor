@@ -4,7 +4,7 @@ require "test_helper"
 
 class ContextTest < Minitest::Test
   def setup
-    @context = CsvProcessor::Context.new
+    @context = CSVProcessor::Context.new
   end
 
   def test_errors_starts_empty

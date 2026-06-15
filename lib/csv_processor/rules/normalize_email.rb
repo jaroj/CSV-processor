@@ -2,10 +2,10 @@
 
 require_relative "../rule"
 
-module CsvProcessor
+module CSVProcessor
   module Rules
     class NormalizeEmail
-      include CsvProcessor::Rule
+      include CSVProcessor::Rule
 
       def initialize(field, **_opts)
         @field = field

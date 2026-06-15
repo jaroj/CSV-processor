@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module CsvProcessor
+module CSVProcessor
   class Context
     attr_reader :errors
 

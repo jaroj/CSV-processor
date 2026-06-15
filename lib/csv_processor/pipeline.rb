@@ -3,7 +3,7 @@
 require_relative "context"
 require_relative "result"
 
-module CsvProcessor
+module CSVProcessor
   class Pipeline
     def initialize(rules)
       @rules = rules

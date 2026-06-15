@@ -4,12 +4,12 @@ require "test_helper"
 
 class NormalizeEmailTest < Minitest::Test
   def rule
-    CsvProcessor::Rules::NormalizeEmail.new(:email)
+    CSVProcessor::Rules::NormalizeEmail.new(:email)
   end
 
   def call(value)
     record = { email: value }
-    rule.call(record, CsvProcessor::Context.new)
+    rule.call(record, CSVProcessor::Context.new)
     record[:email]
   end
 
@@ -39,7 +39,7 @@ class NormalizeEmailTest < Minitest::Test
 
   def test_does_not_add_errors
     record  = { email: "  USER@EXAMPLE.COM  " }
-    context = CsvProcessor::Context.new
+    context = CSVProcessor::Context.new
     rule.call(record, context)
 
     assert_empty context.errors
@@ -47,7 +47,7 @@ class NormalizeEmailTest < Minitest::Test
 
   def test_field_absent_from_record_is_a_noop
     record  = {}
-    context = CsvProcessor::Context.new
+    context = CSVProcessor::Context.new
     rule.call(record, context)
 
     assert_empty record

@@ -9,16 +9,16 @@ class ProcessorTest < Minitest::Test
   EMAIL_REGEX = URI::MailTo::EMAIL_REGEXP
 
   def pipeline
-    CsvProcessor.define do
-      transform :email, CsvProcessor::Rules::NormalizeEmail
-      transform :name,  CsvProcessor::Rules::DefaultValue, default: "unknown"
-      validate  :email, CsvProcessor::Rules::Presence
-      validate  :email, CsvProcessor::Rules::Format, regex: EMAIL_REGEX
+    CSVProcessor.define do
+      transform :email, CSVProcessor::Rules::NormalizeEmail
+      transform :name,  CSVProcessor::Rules::DefaultValue, default: "unknown"
+      validate  :email, CSVProcessor::Rules::Presence
+      validate  :email, CSVProcessor::Rules::Format, regex: EMAIL_REGEX
     end
   end
 
   def results
-    @results ||= CsvProcessor::Processor.new(pipeline).call(FIXTURE_PATH)
+    @results ||= CSVProcessor::Processor.new(pipeline).call(FIXTURE_PATH)
   end
 
   def test_returns_one_result_per_row
@@ -67,7 +67,7 @@ class ProcessorTest < Minitest::Test
     Tempfile.create(["empty", ".csv"]) do |f|
       f.write("name,email,phone\n")
       f.flush
-      result = CsvProcessor::Processor.new(pipeline).call(f.path)
+      result = CSVProcessor::Processor.new(pipeline).call(f.path)
       assert_empty result
     end
   end
