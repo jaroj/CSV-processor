@@ -44,4 +44,13 @@ class NormalizeEmailTest < Minitest::Test
 
     assert_empty context.errors
   end
+
+  def test_field_absent_from_record_is_a_noop
+    record  = {}
+    context = CsvProcessor::Context.new
+    rule.call(record, context)
+
+    assert_empty record
+    assert_empty context.errors
+  end
 end

@@ -62,4 +62,13 @@ class ProcessorTest < Minitest::Test
       assert_equal i + 1, result.row
     end
   end
+
+  def test_empty_csv_returns_empty_array
+    Tempfile.create(["empty", ".csv"]) do |f|
+      f.write("name,email,phone\n")
+      f.flush
+      result = CsvProcessor::Processor.new(pipeline).call(f.path)
+      assert_empty result
+    end
+  end
 end

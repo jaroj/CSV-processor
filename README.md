@@ -55,10 +55,14 @@ end
 
 `CsvProcessor.define` builds a pipeline inside a block. `transform` and `validate` are interchangeable — both register a rule. The distinction is semantic, to make pipelines readable.
 
+**Rules run in the order they are registered.** This matters when transforms feed into validators: a `DefaultValue` registered before `Presence` means the field will never be blank by the time presence is checked. Registering `Presence` first will flag the blank value even if a default fills it in afterward.
+
 ```ruby
+# Correct order: normalize first, then validate the normalized value
 pipeline = CsvProcessor.define do
   transform :email, CsvProcessor::Rules::NormalizeEmail
   validate  :email, CsvProcessor::Rules::Presence
+  validate  :email, CsvProcessor::Rules::Format, regex: /\A[^@]+@[^@]+\z/
 end
 ```
 
@@ -175,6 +179,8 @@ end
 **Immutable record flow.** `Pipeline` duplicates the incoming record before passing it through rules (`record.dup`). The `Result` object exposes both `record` (post-processing) and `original` (the unmodified input). Rules should assign new values to fields rather than mutating strings in-place to preserve this guarantee (e.g. `value.strip.downcase` not `value.strip!`).
 
 **`transform` and `validate` are the same method.** In `PipelineBuilder`, `validate` is an alias for `transform`. Both register a rule object — the distinction is documentary only. This keeps the pipeline interface minimal while making the intent of each rule clear to readers.
+
+**Rule order is significant.** Rules execute in registration order. Transforms run before whichever validators follow them in the pipeline — not before all validators globally. This means `DefaultValue` placed before `Presence` prevents a presence error; placed after, it fills in the field but the error has already been recorded. The pipeline makes no attempt to infer a "safe" order automatically.
 
 **Format skips blank values.** `Format` returns early if the field is nil or blank. A blank field is the concern of `Presence`. Running both rules on the same field will produce at most one error: either "must be present" or "is invalid", never both.
 

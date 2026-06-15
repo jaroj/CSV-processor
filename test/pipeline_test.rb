@@ -71,4 +71,43 @@ class PipelineTest < Minitest::Test
 
     assert_equal "user@example.com", result.record[:email]
   end
+
+  def test_duplicate_rule_produces_duplicate_errors
+    rule     = CsvProcessor::Rules::Presence.new(:email)
+    pipeline = CsvProcessor::Pipeline.new([rule, rule])
+
+    result = pipeline.call({ email: nil })
+
+    assert_equal 2, result.errors.size
+  end
+
+  def test_transform_before_validate_prevents_presence_error
+    default_rule  = CsvProcessor::Rules::DefaultValue.new(:email, default: "fallback@example.com")
+    presence_rule = CsvProcessor::Rules::Presence.new(:email)
+    pipeline      = CsvProcessor::Pipeline.new([default_rule, presence_rule])
+
+    result = pipeline.call({ email: nil })
+
+    assert result.valid?
+    assert_equal "fallback@example.com", result.record[:email]
+  end
+
+  def test_validate_before_transform_still_errors_on_blank
+    presence_rule = CsvProcessor::Rules::Presence.new(:email)
+    default_rule  = CsvProcessor::Rules::DefaultValue.new(:email, default: "fallback@example.com")
+    pipeline      = CsvProcessor::Pipeline.new([presence_rule, default_rule])
+
+    result = pipeline.call({ email: nil })
+
+    assert result.invalid?
+    assert_equal "fallback@example.com", result.record[:email]
+  end
+
+  def test_rule_targeting_absent_field_sees_nil
+    rule   = CsvProcessor::Rules::Presence.new(:missing)
+    result = CsvProcessor::Pipeline.new([rule]).call({})
+
+    assert result.invalid?
+    assert_equal 1, result.errors_for(:missing).size
+  end
 end
