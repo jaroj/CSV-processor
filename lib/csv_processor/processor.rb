@@ -9,8 +9,8 @@ module CsvProcessor
     end
 
     def call(path)
-      CSV.foreach(path, headers: true).map do |row|
-        @pipeline.call(row.to_h.transform_keys(&:to_sym))
+      CSV.foreach(path, headers: true).map.with_index(1) do |row, index|
+        @pipeline.call(row.to_h.transform_keys(&:to_sym), row: index)
       end
     end
   end

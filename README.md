@@ -111,6 +111,7 @@ result.valid?              # => true / false
 result.invalid?            # => true / false
 result.record              # => { email: "user@example.com", ... }  (transformed)
 result.original            # => { email: "USER@EXAMPLE.COM", ... }  (original CSV row)
+result.row                 # => 1  (1-based data row index, nil when called outside Processor)
 result.errors              # => [{ field: :email, message: "is invalid" }, ...]
 result.errors_for(:email)  # => [{ field: :email, message: "is invalid" }]
 ```

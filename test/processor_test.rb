@@ -56,4 +56,10 @@ class ProcessorTest < Minitest::Test
   def test_original_record_is_unmodified
     assert_equal "ALICE@EXAMPLE.COM", results[0].original[:email]
   end
+
+  def test_row_numbers_are_1_based
+    results.each_with_index do |result, i|
+      assert_equal i + 1, result.row
+    end
+  end
 end

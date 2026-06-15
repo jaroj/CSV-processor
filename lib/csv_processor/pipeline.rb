@@ -9,11 +9,11 @@ module CsvProcessor
       @rules = rules
     end
 
-    def call(record)
+    def call(record, row: nil)
       context = Context.new
       processed = record.dup
       @rules.each { |rule| rule.call(processed, context) }
-      Result.new(record: processed, original: record, errors: context.errors)
+      Result.new(record: processed, original: record, errors: context.errors, row: row)
     end
   end
 end

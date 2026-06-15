@@ -8,13 +8,13 @@ module CsvProcessor
       @rules = []
     end
 
-    def transform(field_or_callable, klass = nil, **opts)
+    def transform(field_or_callable, klass = nil, **)
       if field_or_callable.respond_to?(:call)
         @rules << field_or_callable
       else
         raise ArgumentError, "a rule class must be provided as the second argument" if klass.nil?
 
-        @rules << klass.new(field_or_callable, **opts)
+        @rules << klass.new(field_or_callable, **)
       end
     end
 

@@ -53,4 +53,16 @@ class ResultTest < Minitest::Test
     assert_equal record,   result.record
     assert_equal original, result.original
   end
+
+  def test_row_defaults_to_nil
+    result = CsvProcessor::Result.new(record: {}, original: {}, errors: [])
+
+    assert_nil result.row
+  end
+
+  def test_row_is_accessible_when_provided
+    result = CsvProcessor::Result.new(record: {}, original: {}, errors: [], row: 3)
+
+    assert_equal 3, result.row
+  end
 end

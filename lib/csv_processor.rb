@@ -15,9 +15,9 @@ require_relative "csv_processor/rules/format"
 module CsvProcessor
   class Error < StandardError; end
 
-  def self.define(&block)
+  def self.define(&)
     builder = PipelineBuilder.new
-    builder.instance_eval(&block)
+    builder.instance_eval(&)
     builder.build
   end
 end

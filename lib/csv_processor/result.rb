@@ -2,12 +2,13 @@
 
 module CsvProcessor
   class Result
-    attr_reader :record, :original, :errors
+    attr_reader :record, :original, :errors, :row
 
-    def initialize(record:, original:, errors:)
+    def initialize(record:, original:, errors:, row: nil)
       @record   = record
       @original = original
       @errors   = errors
+      @row      = row
     end
 
     def valid?
