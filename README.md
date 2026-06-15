@@ -57,6 +57,24 @@ end
 
 **Rules run in the order they are registered.** This matters when transforms feed into validators: a `DefaultValue` registered before `Presence` means the field will never be blank by the time presence is checked. Registering `Presence` first will flag the blank value even if a default fills it in afterward.
 
+**Registering the same rule twice raises an `ArgumentError`** at pipeline build time, before any CSV is processed. This applies to both class-based rules (same class + same field) and lambdas (same object):
+
+```ruby
+pipeline = CsvProcessor.define do
+  validate :email, CsvProcessor::Rules::Presence
+  validate :email, CsvProcessor::Rules::Presence  # => ArgumentError: duplicate rule
+end
+```
+
+The same rule class on different fields is allowed:
+
+```ruby
+pipeline = CsvProcessor.define do
+  validate :email, CsvProcessor::Rules::Presence  # ok
+  validate :name,  CsvProcessor::Rules::Presence  # ok — different field
+end
+```
+
 ```ruby
 # Correct order: normalize first, then validate the normalized value
 pipeline = CsvProcessor.define do
@@ -106,7 +124,7 @@ pipeline = CsvProcessor::Pipeline.new([
 results = CsvProcessor::Processor.new(pipeline).call("path/to/file.csv")
 ```
 
-`Processor#call` returns an array of `Result` objects, one per CSV row.
+`Processor#call` returns an array of `Result` objects, one per CSV row. A sample CSV file is included at `fixtures/sample.csv` — see the [Sample CSV](#sample-csv) section for details.
 
 ### Working with results
 

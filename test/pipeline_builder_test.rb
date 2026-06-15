@@ -63,6 +63,35 @@ class PipelineBuilderTest < Minitest::Test
     assert_raises(ArgumentError) { builder.transform(:email) }
   end
 
+  def test_duplicate_class_rule_on_same_field_raises
+    builder = CsvProcessor::PipelineBuilder.new
+    builder.validate(:email, CsvProcessor::Rules::Presence)
+
+    assert_raises(ArgumentError) { builder.validate(:email, CsvProcessor::Rules::Presence) }
+  end
+
+  def test_same_class_on_different_fields_is_allowed
+    builder = CsvProcessor::PipelineBuilder.new
+    builder.validate(:email, CsvProcessor::Rules::Presence)
+
+    assert_nothing_raised { builder.validate(:name, CsvProcessor::Rules::Presence) }
+  end
+
+  def test_duplicate_lambda_raises
+    rule    = ->(_r, _c) {}
+    builder = CsvProcessor::PipelineBuilder.new
+    builder.transform(rule)
+
+    assert_raises(ArgumentError) { builder.transform(rule) }
+  end
+
+  def test_different_lambda_instances_are_allowed
+    builder = CsvProcessor::PipelineBuilder.new
+    builder.transform(->(_r, _c) {})
+
+    assert_nothing_raised { builder.transform(->(_r, _c) {}) }
+  end
+
   def test_define_dsl_produces_same_result_as_builder
     pipeline = CsvProcessor.define do
       transform :email, CsvProcessor::Rules::NormalizeEmail
