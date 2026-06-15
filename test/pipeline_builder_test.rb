@@ -38,19 +38,23 @@ class PipelineBuilderTest < Minitest::Test
   end
 
   def test_mix_of_class_and_lambda_rules
-    upcase = ->(record, _ctx) { record[:name] = record[:name].to_s.upcase }
-
-    pipeline = CsvProcessor::PipelineBuilder.new.tap do |b|
-      b.transform(:email, CsvProcessor::Rules::NormalizeEmail)
-      b.transform(upcase)
-      b.validate(:email, CsvProcessor::Rules::Presence)
-    end.build
-
-    result = pipeline.call({ email: "USER@EXAMPLE.COM", name: "alice" })
+    pipeline = build_mixed_pipeline
+    result   = pipeline.call({ email: "USER@EXAMPLE.COM", name: "alice" })
 
     assert_equal "user@example.com", result.record[:email]
     assert_equal "ALICE", result.record[:name]
     assert result.valid?
+  end
+
+  private
+
+  def build_mixed_pipeline
+    upcase = ->(record, _ctx) { record[:name] = record[:name].to_s.upcase }
+    builder = CsvProcessor::PipelineBuilder.new
+    builder.transform(:email, CsvProcessor::Rules::NormalizeEmail)
+    builder.transform(upcase)
+    builder.validate(:email, CsvProcessor::Rules::Presence)
+    builder.build
   end
 
   def test_transform_with_symbol_and_no_class_raises

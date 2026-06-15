@@ -34,7 +34,7 @@ class DefaultValueTest < Minitest::Test
   end
 
   def test_only_target_field_is_affected
-    record  = { name: nil, email: "user@example.com" }
+    record = { name: nil, email: "user@example.com" }
     rule.call(record, CsvProcessor::Context.new)
 
     assert_equal "unknown",          record[:name]

@@ -10,7 +10,7 @@ module CsvProcessor
     end
 
     def call(record)
-      context  = Context.new
+      context = Context.new
       processed = record.dup
       @rules.each { |rule| rule.call(processed, context) }
       Result.new(record: processed, original: record, errors: context.errors)

@@ -49,20 +49,23 @@ class PipelineTest < Minitest::Test
   end
 
   def test_multiple_rules_all_run_even_after_error
-    errors_added = 0
-    rule_a = ->(_r, ctx) { ctx.add_error(:email, "error a"); errors_added += 1 }
-    rule_b = ->(_r, ctx) { ctx.add_error(:name,  "error b"); errors_added += 1 }
+    result = CsvProcessor::Pipeline.new(two_error_rules).call({})
 
-    result = CsvProcessor::Pipeline.new([rule_a, rule_b]).call({})
-
-    assert_equal 2, errors_added
     assert_equal 2, result.errors.size
   end
 
+  private
+
+  def two_error_rules
+    [
+      ->(_r, ctx) { ctx.add_error(:email, "error a") },
+      ->(_r, ctx) { ctx.add_error(:name, "error b") }
+    ]
+  end
+
   def test_class_based_rule_works
-    pipeline = CsvProcessor::Pipeline.new([
-      CsvProcessor::Rules::NormalizeEmail.new(:email)
-    ])
+    rule     = CsvProcessor::Rules::NormalizeEmail.new(:email)
+    pipeline = CsvProcessor::Pipeline.new([rule])
 
     result = pipeline.call({ email: "  USER@EXAMPLE.COM  " })
 

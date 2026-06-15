@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "test_helper"
+require "uri"
 
 class FormatTest < Minitest::Test
   EMAIL_REGEX = URI::MailTo::EMAIL_REGEXP

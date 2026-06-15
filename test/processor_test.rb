@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "test_helper"
+require "uri"
 
 class ProcessorTest < Minitest::Test
   FIXTURE_PATH = File.expand_path("../fixtures/sample.csv", __dir__)
