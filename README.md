@@ -2,6 +2,10 @@
 
 A Ruby library for processing CSV records through a configurable pipeline of rules. Rules either transform field values or validate them. The pipeline collects **all** errors instead of stopping on the first failure.
 
+## Requirements
+
+Ruby 3.3 or higher.
+
 ## Installation
 
 Add to your Gemfile:
